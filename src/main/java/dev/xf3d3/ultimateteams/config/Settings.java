@@ -55,6 +55,13 @@ public class Settings {
 
         @Comment("Should the plugin open the team list GUI instead of sending a chat message when /team list is used? [Default value: false]")
         private boolean useGuiForTeamList = false;
+
+        @Comment({
+                "Determines how teams are sorted in the team list GUI. [Default: true]",
+                "true  = Sort by most members first, then by owner online status.",
+                "false = Sort by online owners first, then by most members."
+        })
+        private boolean sortByMostPlayers = true;
     }
 
     @Comment("Database Settings")

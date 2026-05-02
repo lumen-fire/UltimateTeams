@@ -57,7 +57,7 @@ public class TeamCommand extends BaseCommand {
 
         if (sender instanceof final Player player) {
             if (plugin.getSettings().getGui().isUseGuiForTeamList()) {
-                // Check if player is in a team
+                // Check if the player is in a team
                 if (plugin.getTeamStorageUtil().findTeamByMember(player.getUniqueId()).isPresent()) {
                     // Player is in a team, open team manager
                     new TeamManager(plugin, player);

@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class TeamsStorage {
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '&' + "[0-9A-FK-OR]");
@@ -265,5 +266,50 @@ public class TeamsStorage {
             
             // Note: Team data updates are handled by TEAM_UPDATE message sent in updateTeamData()
         });
+    }
+
+    /**
+     * Sorts a set of teams based on the sortByMostPlayers configuration.
+     * @return A sorted list of teams ready for the GUI
+     */
+    public List<Team> getSortedTeams() {
+
+        // Sorts 'true' (Online) before 'false' (Offline)
+        Comparator<Team> ownerOnlineComparator = Comparator.comparing(
+                (Team team) -> Bukkit.getPlayer(team.getOwner()) != null,
+                Comparator.reverseOrder()
+        );
+
+        // Sorts largest member count to smallest
+        Comparator<Team> sizeComparator = Comparator.comparing(
+                (Team team) -> team.getMembers().size(),
+                Comparator.reverseOrder()
+        );
+
+        // Sorts alphabetical by team name (in case there's an exact tie)
+        Comparator<Team> nameComparator = Comparator.comparing(
+                Team::getName,
+                String.CASE_INSENSITIVE_ORDER
+        );
+
+        // Combine the comparators based on the boolean config
+        Comparator<Team> finalComparator;
+
+        if (plugin.getSettings().getGui().isSortByMostPlayers()) {
+            // Primary: Size | Secondary: Owner Online | Tie-breaker: Name
+            finalComparator = sizeComparator
+                    .thenComparing(ownerOnlineComparator)
+                    .thenComparing(nameComparator);
+        } else {
+            // Primary: Owner Online | Secondary: Size | Tie-breaker: Name
+            finalComparator = ownerOnlineComparator
+                    .thenComparing(sizeComparator)
+                    .thenComparing(nameComparator);
+        }
+
+        // Apply the sort and return as a List
+        return getTeams().stream()
+                .sorted(finalComparator)
+                .collect(Collectors.toList());
     }
 }

@@ -55,14 +55,14 @@ public class TeamList {
 
         // Teams
         GuiElementGroup group = new GuiElementGroup('g');
-        for (Team team : plugin.getTeamStorageUtil().getTeams()) {
+        for (Team team : plugin.getTeamStorageUtil().getSortedTeams()) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(team.getOwner());
 
             group.addElement((new StaticGuiElement('e', createPlayerSkull(player), getTeamInfo(plugin, team).toArray(new String[0]))));
 
         }
-        gui.addElement(group);
 
+        gui.addElement(group);
         gui.show(player);
     }
 

@@ -112,20 +112,24 @@ public class Team {
     }
 
     public List<Player> getOnlineMembers() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getMembers().containsKey(player.getUniqueId())).collect(Collectors.toUnmodifiableList());
+        return getMembers().keySet().stream()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public void sendTeamMessage(@NotNull String message) {
-        Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getMembers().containsKey(player.getUniqueId()))
-                .forEach(player -> player.sendMessage(message));
+        getMembers().keySet().forEach(uuid -> {
+            final Player player = Bukkit.getPlayer(uuid);
+            if (player != null) player.sendMessage(message);
+        });
     }
 
     public void sendTeamMessage(@NotNull Component component) {
-        Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getMembers().containsKey(player.getUniqueId()))
-                .forEach(player -> player.sendMessage(component));
+        getMembers().keySet().forEach(uuid -> {
+            final Player player = Bukkit.getPlayer(uuid);
+            if (player != null) player.sendMessage(component);
+        });
     }
 
     public Optional<TeamWarp> getTeamWarp(@NotNull String name) {
@@ -167,12 +171,13 @@ public class Team {
 
     @NotNull
     public Map<Team, Relation> getRelations(@NotNull UltimateTeams plugin) {
-        return getRelations().entrySet().stream()
-                .filter(e -> plugin.getTeamStorageUtil().findTeam(e.getKey()).isPresent())
-                .collect(Collectors.toMap(
-                        e -> plugin.getTeamStorageUtil().findTeam(e.getKey()).orElse(null),
-                        Map.Entry::getValue
-                ));
+        Map<Team, Relation> result = new HashMap<>();
+        for (Map.Entry<Integer, Relation> entry : getRelations().entrySet()) {
+            plugin.getTeamStorageUtil().findTeam(entry.getKey()).ifPresent(team ->
+                    result.put(team, entry.getValue())
+            );
+        }
+        return result;
     }
 
     @NotNull
@@ -195,6 +200,7 @@ public class Team {
     }
 
     public void addPermission(Permission perm) {
+        if (this.permissions == null) this.permissions = EnumSet.noneOf(Permission.class);
         permissions.add(perm);
     }
 
