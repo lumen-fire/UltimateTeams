@@ -233,6 +233,10 @@ public class TeamEnderChestSubCommand implements Listener {
             return;
         }
 
+        if (!activeViews.containsKey(player.getUniqueId())) {
+            return;
+        }
+
         // Check if this is a team chest inventory
         if (!(event.getInventory().getHolder() instanceof TeamChestHolder(int teamId, int chestNumber))) {
             return;
