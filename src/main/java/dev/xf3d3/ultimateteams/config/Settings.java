@@ -31,6 +31,9 @@ public class Settings {
             ┃
             ┗╸ Information: https://modrinth.com/plugin/ultimate-teams""";
 
+    @Comment("The plugin main command (changes require a server restart)")
+    private String mainCommand = "team";
+
     @Comment("Hook into luckperms to create contexts (e.g. is-in-team) [Default value: false]. Needs LuckPerms")
     private boolean luckpermsHook = false;
 

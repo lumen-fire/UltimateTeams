@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 @SuppressWarnings("unused")
-@CommandAlias("team")
+@CommandAlias("%main-command")
 @CommandPermission("ultimateteams.player")
 public class TeamCommand extends BaseCommand {
     private static List<String> bannedTags;

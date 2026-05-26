@@ -43,6 +43,8 @@ public class PlayerChatEvent implements Listener {
 
         if (teamChatTalking) {
             event.setCancelled(true);
+            event.viewers().clear();
+
             sendToTeamChat(player, event.message());
 
             return;
@@ -50,6 +52,8 @@ public class PlayerChatEvent implements Listener {
 
         if (allyChatTalking) {
             event.setCancelled(true);
+            event.viewers().clear();
+
             sendToAllyChat(player, event.message());
         }
     }
